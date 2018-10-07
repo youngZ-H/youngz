@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限管理界面</title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/js/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/MyAjaxForm.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.unobtrusive-ajax.min.js"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+            loadData();
+            //加载时，添加角色信息弹出窗口隐藏
+            $('#addActionDiv').css("display","none");
+            bindChangeActionTypeEnum();//为权限下拉框绑定change事件
+            //加载页面信息完成后，绑定点击上传图片事件
+            bindBtnFileUp()
+        })
+        function loadData() {
+            $('#tt').datagrid({
+                url: '/Admin/ActionInfo/GetActionInfo',
+                title: '权限数据表格',
+                width: 700,
+                height: 400,
+                fitColumns: true, //列自适应
+                nowrap: false,
+                idField: 'Id',//主键列的列明
+                loadMsg: '正在加载权限的信息...',
+                pagination: true,//是否有分页
+                singleSelect: false,//是否单行选择
+                pageSize:5,//页大小，一页多少条数据
+                pageNumber: 1,//当前页，默认的
+                pageList: [2, 5, 10],
+                queryParams: {},//往后台传递参数
+                columns: [[//c.UserName, c.UserPass, c.Email, c.RegTime
+                    { field: 'ck', checkbox: true, align: 'left', width: 50 },
+                    { field: 'Id', title: '编号', width: 80 },
+                    { field: 'ActionInfoName', title: '权限名称', width: 120 },
+                    { field: 'HttpMethod', title: '请求方式', width: 120 },
+                    { field: 'Url', title: '请求地址', width: 120 },
+                    { field: 'Remark', title: '备注', width: 120 },
+                    { field: 'ActionTypeEnum', title: '权限类型', width: 120,
+                        formatter:function (value,row,index) {
+                            return value=="1"?"菜单权限":"普通权限"
+                        }
+                    },
+                    { field: 'AddDate', title: '时间', width: 120, align: 'right',
+                        formatter: function (value, row, index) {
+                            return value.split('T')[0]
+                        }
+                    }
+                ]],
+                toolbar: [{
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        //删除方法的实现
+                        DeleteAction();
+                    }
+                },{
+                    id:'btnAdd',
+                    text:'添加',
+                    iconCls:'icon-add',
+                    handler:function () {
+                        showAddAction();
+                    }
+                },{
+                    id:'btnEdit',
+                    text:'编辑',
+                    iconCls:'icon-edit',
+                    handler:function () {
+                        //编辑方法的实现,首先展示要编辑的信息
+                        ShowEditAction();
+                    }
+                }],
+            });
+        }
+        function showAddAction() {
+            //点击添加按钮时，弹窗弹出
+            $('#addActionDiv').css("display","block");
+            $("#addActionDiv").dialog({
+                title: '添加权限信息',
+                width: 400,
+                height: 300,
+                collapsible: true, //可折叠
+                maximizable: true, //最大化
+                resizable: true,//可缩放
+                modal: true,//模态，表示只有将该窗口关闭才能修改页面中其它内容
+                buttons: [{ //按钮组
+                    text: 'Ok',//按钮上的文字
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //点击ok按钮后进行表单的提交
+                        $('#form1').submit();
+                        $('#form1')[0].reset();
+                    }
+                }, {
+                    text: 'Cancel',
+                    handler: function () {
+                        $('#addActionDiv').dialog('close');
+                    }
+                }]
+            });
+
+        }
+        function bindChangeActionTypeEnum() {
+            //给菜单的下拉框绑定change事件
+            $('#changeActionTypeEnum').change(function () {
+                //通过判断菜单的类型，来获取不同的value值，进行菜单块的隐藏和展示
+                if($(this).val()=="1"){
+                    $('#iconTr').fadeIn();
+                }else {
+                    $('#iconTr').fadeOut();
+                }
+            })
+        }
+        //上传图片的点击事件的方法的实现
+        function bindBtnFileUp() {
+            //实现文件的异步上传
+            //绑定按钮的单击事件
+            $('#btnFileUp').click(function () {
+                $('#form1').ajaxSubmit({
+                    success:function (data){
+                       if (data.flag == "ok"){
+                           //上传成功后，进行路径的返回
+                           var src = data.msg.substr(1)
+                           //先展示图片的包裹内写入图片的信息，进行图片的展示
+                           // $('#showImage').html("<img src="+src+"width="+"50px"+ "height="+"50px"+">")
+                          $('#showImage').html("<img src='"+src+"' width='50px' height='50px'>")
+                           //将文件的路径传递给图标的隐藏域
+                           $('#hiddenMenuIcon').val(src)
+                       }else{
+
+                       }
+                    },
+                    error:function (error) {
+                        alert(error);
+                    },
+                    url:'FileUp', //设置文件的上传路径
+                    type:"post",//设置表单的提交方式
+                    dataType:"json"//设置数据的返回值类型参数
+            })
+        })
+}
+        //保存到数据库的回调函数
+        function afterAdd(data) {
+            if (data.flag == "ok"){
+                //成功后进行数据的重载
+                $('#tt').datagrid('reload');
+                //关闭窗口
+                $("#addActionDiv").dialog('close');
+            }
+        }
+        //删除方法的实现
+        function DeleteAction() {
+            //先读取选中的是那几行
+            var rows =  $('#tt').datagrid('getSelections');
+            //对选择的行数进行判断，判断是否选中了行
+            if (!rows || rows.length == 0){
+                $.messager.alert("提示","请选中要删除的行","error");
+                return;
+            }
+            //选中行数后，进行数据的获取
+            //rows是一个二维数组，循环遍历取出id值，将其传递给后端
+            //定义一个字符串，用来存储取出的id值
+            //提示用户是否删除信息
+            $.messager.confirm("提示","确认是否删除信息？",function (r) {
+                if (r){
+                    var strId = "";
+                    for(var i = 0; i < rows.length; i++){
+                        strId = strId + rows[i].Id + ',';
+                    }
+                    //因为strId多了一个逗号，进行字符串的截取操作
+                    strId = strId.substr(0,strId.length-1);
+                    console.log(strId);
+                    //将获取到的数据传递给后端，进行数据的处理
+                    $.post("/Admin/ActionInfo/DeleteAction",{"strId":strId},function (data) {
+                        if(data.flag == "ok"){
+                            $.messager.alert("提示","删除数据成功","info");
+                            //进行数据的重载
+                            $('#tt').datagrid('reload');
+                            //清除以前选中的数据
+                            $('#tt').datagrid('clearSelections');
+                        }
+                    })
+                }else {
+                    $.messager.alert("提示","删除数据失败","error");
+                }
+
+            })
+        }
+        //编辑方法的实现
+        function ShowEditAction() {
+            //读取选中的角色的信息
+            var  rows =  $('#tt').datagrid('getSelections');
+            //对用户选择的行进行判断，是否是一行，修改数据只能够一行一行进行修改
+            if (rows.length != 1){
+                $.messager.alert("提示","请勿非法操作","error");
+                return;
+            }
+            //获取到要编辑角色信息的行的id号
+            var Id = rows[0].Id;
+            //将要编辑的数据的信息发送回服务端
+            $.post("/Admin/ActionInfo/ShowEditAction",{"Id":Id},function (data) {
+                //接收从后端发送来的待要编辑数据的信息进行展示
+                $('#ActionInfoName').val(data.actionInfo.ActionInfoName);
+                $('#Url').val(data.actionInfo.Url);
+                $('#HttpMethod').val(data.actionInfo.HttpMethod);
+                $('#changeActionTypeEnum').val(data.actionInfo.ActionTypeEnum);
+                $('#fileUp').val('');
+                $('#Remark').val(data.actionInfo.Remark);
+                $('#iconTr').val(data.actionInfo.MenuIcon);
+
+
+
+                $("#addActionDiv").css("display","block");
+                //弹出编辑窗口
+                $("#addActionDiv").dialog({
+                    title: '添加角色信息信息',
+                    width: 300,
+                    height: 300,
+                    collapsible: true, //可折叠
+                    maximizable: true, //最大化
+                    resizable: true,//可缩放
+                    modal: true,//模态，表示只有将该窗口关闭才能修改页面中其它内容
+                    buttons: [{ //按钮组
+                        text: 'Ok',//按钮上的文字
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            EditRoleData();
+                        }
+                    }, {
+                        text: 'Cancel',
+                        handler: function () {
+                            $('#addActionDiv').dialog('close');
+                        }
+                    }]
+                });
+            })
+
+        }
+
+
+
+
+    </script>
+</head>
+<body>
+<table id="tt" style="width: 700px;" title="标题，可以使用代码进行初始化，也可以使用这种属性的方式" iconcls="icon-edit">
+</table>
+<div id="addActionDiv">
+    <form  data-ajax="true" data-ajax-method="post" data-ajax-success="afterAdd" data-ajax-url="/Admin/ActionInfo/AddAction" id="form1">
+        <input type="hidden" name="MenuIcon" id="hiddenMenuIcon" />
+        <table>
+            <tr>
+                <td>权限名称</td>
+                <td>
+                    <input type="text" name="ActionInfoName" id="ActionInfoName"/></td>
+            </tr>
+            <tr>
+                <td>Url</td>
+                <td>
+                    <input type="text" name="Url" id="Url"/></td>
+            </tr>
+            <tr>
+                <td>请求方式</td>
+                <td>
+                    <select name="HttpMethod" id="HttpMethod">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                    </select>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td>权限类型</td>
+                <td>
+                    <select name="ActionTypeEnum" id="changeActionTypeEnum">
+                        <option value="0">普通权限</option>
+                        <option value="1">菜单权限</option>
+                    </select>
+
+                </td>
+            </tr>
+
+            <tr style="display:none" id="iconTr">
+                <td>上传图标</td>
+                <td>
+                    <input type="file" name="fileUp" id="fileUp"/>
+                    <input type="button" value="上传图片" id="btnFileUp" />
+                    <div id="showImage"></div>
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>备注</td>
+                <td>
+                    <input type="text" name="Remark" id="Remark"/></td>
+            </tr>
+
+        </table>
+
+
+    </form>
+</div>
+</body>
+</html>

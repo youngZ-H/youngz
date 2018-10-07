@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理页面</title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/js/easyui-lang-zh_CN.js"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+            //绑定点击选项卡事件
+            $(".dlinks").click(function () {
+                //调用点击事件的函数
+                bindClickEvent($(this));
+            })
+        })
+        //点击事件函数的实现
+        function bindClickEvent(control) {
+            //获取url的值
+            var url = control.attr("url")
+            //先判断页签中是否已经有了对应的页面
+            //先获取页签的中的标题
+            var title = control.text();
+           var b = $("#tt").tabs("exists",title);
+            //判断标签是否已经打开
+            if(b){
+                //条件成立，表示页签存在，选中即可
+                $("#tt").tabs("select",title);
+                return;
+            }
+            //页签不存在，需要打开添加一个新的页签
+            $("#tt").tabs("add",{
+                title:title,
+                content:CreateContent(url),
+                closable:true
+            });
+        }
+        //iframe中的内容函数方法的实现
+        function CreateContent(url) {
+            var ifrmeContent="  <iframe src='"+url+"' width=\"100%\" height=\"100%\" frameborder=\"0\"></iframe>"
+            return ifrmeContent;
+
+        }
+
+
+
+    </script>
+</head>
+<body class="easyui-layout">
+//-----------------------主页面上部----------------------------------
+<div data-options="region:'north',border:false" style="height:90px;background:#B3DFDA;padding:10px; overflow: hidden;">
+    <img src="/static/img/logo.gif">
+    <span style="font-size:30px;color: blue;font-weight: bolder;margin-left: 400px">ItcastCms管理系统</span>
+</div>
+//------------------------主页面左边---------------------------------------
+<div data-options="region:'west',split:true,title:'West'" style="width:150px;padding:5px;">
+    <div class="easyui-accordion" style="width:auto;height:auto;">
+        <div title="用户管理" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:10px;">
+            <a href="#" class="dlinks" url="/Admin/UserInfo/Index">用户管理</a>
+        </div>
+        <div title="角色管理" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:10px;">
+            <a href="#" class="dlinks" url="/Admin/RoleInfo/Index">角色管理</a>
+        </div>
+         <div title="权限管理" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:10px;">
+             <a href="#" class="dlinks" url="/Admin/ActionInfo/Index">权限管理</a>
+        </div>
+    </div>
+</div>
+//------------------------主页面下边---------------------------------------
+<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">south region</div>
+//------------------------主页面中间---------------------------------------
+<div data-options="region:'center',title:'Center'">
+    <div class="easyui-tabs" style="width:700px;height:250px" fit="true" id="tt">
+        <div title="用户管理" style="padding:10px">
+        <iframe src="/Admin/UserInfo/Index" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+</body>
+</html>

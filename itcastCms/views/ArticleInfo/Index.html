@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章管理</title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/js/easyui-lang-zh_CN.js"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+            //加载信息时，先进行添加文章展示界面的隐藏
+            $('#addArticleDiv').css("display","none");
+            loadData();
+        })
+        function loadData() {
+            $('#tt').datagrid({
+                url: '/Admin/ArticleInfo/GetArticleInfo',
+                title: '新闻数据表格',
+                width: 700,
+                height: 400,
+                fitColumns: true, //列自适应
+                nowrap: false,
+                idField: 'Id',//主键列的列明
+                loadMsg: '正在加载新闻的信息...',
+                pagination: true,//是否有分页
+                singleSelect: false,//是否单行选择
+                pageSize: 5,//页大小，一页多少条数据
+                pageNumber: 1,//当前页，默认的
+                pageList: [5, 10, 15],
+                queryParams: {},//往后台传递参数
+                columns: [[//c.UserName, c.UserPass, c.Email, c.RegTime
+                    { field: 'ck', checkbox: true, align: 'left', width: 50 },
+                    { field: 'Id', title: '编号', width: 80 },
+                    { field: 'Title', title: '标题', width: 120 },
+                    { field: 'Author', title: '作者', width: 120 },
+                    { field: 'Origin', title: '来源', width: 120 },
+                    {
+                        field: 'AddDate', title: '时间', width: 80, align: 'right',
+                        formatter: function (value, row, index) {
+                            return value.split("T")[0];
+                        }
+                    },
+                    {
+                        field: 'ShowDetail', title: '详情', width: 80,
+                        formatter: function (value, row, index) {
+                           var d = row.AddDate.split("T")[0];
+                           var date = d.split("-");
+                           var year = date[0];
+                           var month = date[1];
+                           var day = date[2];
+                           //构建路径
+                            var url = year + "/" + month + "/" + day + "/";
+                            //返回一个a标签
+                            return "<a href='#' ids='"+row.Id+"' class='dlink' showUrl='"+url+"'>详情</a>";
+                        }
+                    }
+
+                ]],
+                onLoadSuccess:function(){
+                    $(".dlink").click(function () {
+                        var showUrl = $(this).attr("showUrl");
+                        var id = $(this).attr("ids");
+                        //构建完整路径
+                        var fullPath = "/static/Article/" + showUrl + id + ".html";
+                        //打开新的窗口
+                        window.open(fullPath);
+                    })
+                },
+                toolbar: [{
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        deleteArticle();
+                    }
+                }, {
+                    id: 'btnAdd',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        addArticle();//添加文章
+
+                    }
+                }, {
+                    id: 'btnEdit',
+                    text: '编辑',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                       // ShowEditArticle();
+                    }
+                }],
+            });
+        }
+        function addArticle() {
+            $('#addArticleFrame').attr("src","/Admin/ArticleInfo/ShowAddArticle")
+            $('#addArticleDiv').css("display","block");
+            $('#addArticleDiv').dialog({
+                title: '添加文章信息',
+                width: 300,
+                height: 300,
+                collapsible: true,
+                maximizable: true,
+                resizable: true,
+                modal: true,
+                buttons: [{
+                    text: 'Ok',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //提交表单。
+                        var childWindows=$("#addArticleFrame")[0].contentWindow;//获取子窗体的windows对象。
+                        childWindows.SubForm();//提交表单
+                        $('#addArticleDiv').dialog('close');
+                    }
+                }, {
+                    text: 'Cancel',
+                    handler: function () {
+                        $('#addArticleDiv').dialog('close');
+                    }
+                }]
+            });
+        }
+        function deleteArticle() {
+            //获取在表格中选中的行（getSelections：表示获取选中的行）
+            var rows = $('#tt').datagrid('getSelections');
+            if (!rows || rows.length == 0) {//判断是否选择了，如果没有选择长度为0
+                //alert("请选择要修改的商品！");
+                $.messager.alert("提醒", "请选择要删除的记录!", "error");
+                return;
+            }
+            //给用户提示，“确认是否删除”
+            $.messager.confirm("提示","确定要删除数据吗？",function (r) {
+                //单击“确定”按钮r的值true，否则为false
+                if(r){
+                    var strId = "";
+                    for (var i=0;i<rows.length;i++){
+                        strId=strId+rows[i].Id +",";
+                    }
+                    strId=strId.substr(0,strId.length-1);
+                    $.post("/Admin/ArticleInfo/DeleteArticle",{"strId":strId},function (data) {
+                        //服务端处理完成后，会将结果返回到客户端，在这里进行判断，如果服务端处理成功
+                        //给出相应的提示，并且重新加载表格。
+                        if (data.flag=="ok"){
+                            $.messager.alert("提示","数据删除成功!!","info");
+                            $("#tt").datagrid('reload');
+                            $('#tt').datagrid('clearSelections');//清除原来以前选中的数据
+                        }else{
+                            $.messager.alert("提示","数据删除出现错误!!","error")
+                        }
+                    })
+                }
+            })
+        }
+
+    </script>
+</head>
+<body>
+<table id="tt" style="width: 700px;" title="标题，可以使用代码进行初始化，也可以使用这种属性的方式" iconcls="icon-edit">
+</table>
+<div id="addArticleDiv">
+    <iframe id="addArticleFrame" frameborder="0" width="100%" height="100%"></iframe>
+</div>
+</body>
+</html>

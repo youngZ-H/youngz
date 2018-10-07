@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>词库管理</title>
+    <script src="/static/js/jquery.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="/static/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+            $('#btnAdd').click(function () {
+                AddData();
+            })
+        })
+        function AddData() {
+            var pars=$("#addForm").serializeArray();//将表单中的数据生成JSON格式，JOSN中的键就是表单元素的name属性的值。
+            $.post("/Admin/SensitiveWord/AddWords", pars, function (data) {
+                if (data.flag == "yes") {
+
+                    //清空表单中的数据
+                    $('#addForm textarea').val("");
+                    $.messager.alert("提示", "添加成功", "info");
+                } else {
+                    $.messager.alert("提示", "添加失败", "error");
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<form id="addForm">
+    <textarea name="contentMsg" rows="30" cols="30"></textarea>
+    <input type="button" value="添加敏感词" id="btnAdd">
+</form>
+
+</body>
+</html>

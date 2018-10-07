@@ -1,0 +1,202 @@
+﻿<!DOCTYPE htmls>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/ArticelTemplate/ArticelStyle.css ">
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <link href="/static/css/pageBarStyle.css" rel="stylesheet" />
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/easyui-lang-zh_CN.js"></script>
+    <script src="/static/js/jquery.easyui.min.js"></script>
+   <script type="text/javascript">
+       $(function () {
+           bindCommentClickEvent();//添加评论
+           loadComment(1);//加载评论
+       })
+       function bindCommentClickEvent() {
+           $("#btnComment").click(function () {
+               //获取用户输入的评论内容
+               var msg=$("#commentMsg").val();
+               if (msg!=""){
+                $.post("/Admin/ArticelInfo/AddComment",{"msg":msg,"articelId":1},function (data) {
+                    if (data.flag=="ok"){
+                        //请求以前的评论内容
+                        $("#articelCommentList li").remove();
+                        //展示评论内容。
+                        loadComment();
+                    }else{
+                        $.messager.alert("提示",data.message,"error");
+                    }
+
+                })
+               } else{
+                   $.messager.alert("提示","评论内容不能为空!!","error");
+               }
+           })
+       }
+       //加载评论
+       function loadComment(page) {
+            $.post("/Admin/ArticelInfo/LoadCommentMsg",{"articelId":1,"pageIndex":page},function (data) {
+                //将返回的评论内容添加到页面上。
+                for (var i=0;i<data.msg.length;i++){
+                    $("<li>"+data.msg[i].AddDate.split("T")[0]+":"+data.msg[i].Msg+"</li>").appendTo("#articelCommentList")
+                }
+                //处理页码条
+                $("#myPageBar").html(data.pageBar);//告诉浏览器要渲染标签，不能作为普通的字符串来处理。
+                bindPageBarClick();//给页码条加上单击事件，获取所单击的页码。
+            })
+       }
+       function bindPageBarClick() {
+           $(".pageBarLink").click(function () {
+              var pageIndex=$(this).attr("href").split("=")[1];//获取超链接中href属性中的页码。
+               //清空上一页内容。
+               $("#articelCommentList li").remove();
+               loadComment(pageIndex)
+               return false;//当前各a标签加上单击事件后，先执行单击事件对应的方法，该方法执行完毕后，紧跟着会执行href的连接。
+               //返回false的作用就是取消连接（不再执行href指定的连接）
+
+           })
+       }
+   </script>
+
+
+</head>
+<body>
+<!--顶部布局-->
+    <div id="articelTop">
+    <!--顶部布局第一行-->
+    	<div id="articelTop_one">
+    		<div classs="articelTop_oneleft">
+    			您好！admin,欢迎来到会员中心!【会员中心】  【退出】
+    		</div>
+    		<div class="articelTop_oneRight">
+    			设为首页&nbsp;加入收藏&nbsp;网站地图
+    		</div>
+    	</div>
+    	 <!--顶部布局第一行结束-->
+    	 <div style="clear:both"></div>
+    	 	 <!--顶部布局第二行开始-->
+    	 	 <div id="articelTop_two">
+    	 	 		<div class="articelTopImg">
+    	 	 			<img src="/ArticelTemplate/images/logo.gif">
+    	 	 		</div>
+    	 	 		<div class="articelTopSearch">
+
+    	 	 		</div>
+    	 	 </div>
+    	 	  <!--顶部布局第二行结束-->
+    	 	   <div style="clear:both"></div>
+    	 	  <!--导航条布局-->
+    	 	  <div id="articelNav">
+    	 	  		<ul>
+    	 	  			<li><a href="javascript:void(0)">首页</a></li>
+    	 	  			<li><a href="javascript:void(0)">新闻频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">图片频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">下载频道</a></li>
+    	 	  		</ul>
+    	 	   </div>
+    	 	    <!--导航条布局结束-->
+    </div>
+    <!--顶部布局结束-->
+    <!--中间内容开始-->
+    <div id="articelContent">
+    	<div id="articelContent_left">
+ 		 <div id="articelContent_leftTop">
+                您当前位置：
+    			<a href="javascript:void(0)">ItcastCMS</a> >> 
+    			<a href="javascript:void(0)">新闻频道</a> >>
+    				<a href="javascript:void(0)">史上最强卧底</a> >>
+    				<a href="javascript:void(0)">浏览文章</a> 
+    		</div>
+    		<div id="articelContent_leftBttom">
+    			<h2>史上最强卧底</h2>
+<div class="artcelTop"><span>时间:2018-10-05 </span><span>信息来源:今日头条</span></div>
+<div id="splitLine"></div>
+
+<p><em>就是这位杰昆&middot;加西亚</em></p>
+
+<p>自打进入FBI（美国联邦调查局）以来，这位老哥主要就做卧底，混迹街头，执行过大大小小上百项卧底任务。</p>
+
+<p>最厉害的一次，直接渗透到美国五大黑手党家族之一的甘比诺家族中，不仅从来没被怀疑过，还在帮派里混得风生水起，差点得到了黑手党的最高荣誉&ldquo;made man&rdquo;（FBI历史上他是第二个收到这个offer的，估计还没出现第三个人），<strong>如果再不收网，他很可能要被当成接班人培养了。</strong>这位177公斤的大哥，绝对能排进史上最强卧底之一。</p>
+
+<p><strong>当上FBI特工的古巴人</strong></p>
+
+<p>1952年，加西亚出生于古巴，父亲原是古巴财政部的高官，母亲则是歌剧演员，家境自然优渥，等到1959年卡斯特罗一上台，他父亲担心会成为被清理的对象，拖家带口逃到了美国。在美国环境里长大的加西亚，并没有按照父母的意愿成为会计师或者律师&mdash;&mdash;他成绩实在太差了，最后靠着打橄榄球的特长上了大学。<img src="/static/fileUp/2018/October/5/2018October51227425141100.jpg" /></p>
+
+
+                <!-------相关新闻------->
+                  <div id="articelContent_Same">
+                  <div class="articelContent_SameNew">相关新闻</div>
+                <ul id="likeNewList">
+                  
+                </ul>
+            </div>
+                 <!-------相关新闻结束------->
+                  <br />
+                <!----------评论展示----------------->
+                <div id="articelComment">
+                    <div id="articelComment_top">
+                       <span style="font-size:20px;font-weight:bolder;display:block"> 我有话说</span>
+                     
+                           <span > 以下是对 <strong>[史上最强卧底]</strong> 的评论,总共:<span id="recordCount" style="font-size:14px;color:red;font-weight: bolder"></span>条评论</span>
+                    </div>
+                    <div id="articelComment_middle">
+                        <ul id="articelCommentList">
+                            
+                        </ul>
+                        <input type="hidden" id="currentPageIndex" />
+                        <div id="myPageBar" class="page_nav"></div>
+                    </div>
+                    <div id="articelCommnet_bottome">
+                        <textarea style="font-size:14px;padding:5px;width:90%;height:90px;overflow:auto;" placeholder="文明上网，请对您的发言负责" id="commentMsg"></textarea>
+                        <input type="button" id="btnComment" style="float:right" value="发布评论" class="reply_btn"/>
+                    </div>
+
+                </div>
+                <!----------评论展示结束----------------->
+    		</div>
+          
+    	</div>
+        <!---中间内容右侧布局---->
+    		<div id="articelContent_right">
+    		   <div id="hotArticel">
+                   <div class="newArticel_Title">
+                    <h3><span>最</span>新文章</h3>
+                </div>
+                <div id="newArticel_Content">
+                    <div id="result"></div>
+
+                    
+              </div>
+
+        </div>
+    	   </div>
+          <!---中间内容右侧布局结束---->
+    </div>
+
+    <!--中间内容结束-->
+    <div id="articelBottom">
+
+           <div id="about">
+            <a href="javascript:void(0)">关于我们</a>
+            <a href="javascript:void(0)">联系我们</a>
+            <a href="javascript:void(0)">法律声明</a>
+            <a href="javascript:void(0)">人才招聘</a>
+            <a href="javascript:void(0)">免责声明</a>
+            <a href="javascript:void(0)">网站地图</a>
+             <a href="javascript:void(0)">友情链接</a>
+            
+        </div>
+        <div id="copyRight">
+            <p>传智播客-专业java培训、php培训、iOS培训、C++培训、网页设计、平面设计、网络营销、游戏开发、前端与移动开发培训机构
+版权所有 2016 - 2018北京传智播客教育科技有限公司</p>
+<p>地址：北京市昌平区建材城西路金燕龙办公楼一层 邮编：100096</p>
+<p>电话：010-82935150/60/70 传真：010-82935100 邮箱: zhanghj+itcast.cn</p>
+        </div>
+
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>为用户分配权限</title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/js/easyui-lang-zh_CN.js"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+            //为单选按钮绑定点击事件
+            $('.selections').click(function () {
+                //调用单选按钮点击事件实现的函数
+                bindClickSelections($(this));
+            })
+            //绑定删除按钮事件
+            $('.btnDelete').click(function () {
+                //调用删除按钮事件
+                bindBtnDelete($(this));
+            })
+        })
+        //单选按钮点击事件的实现
+        function bindClickSelections(control) {
+            //获取权限id用户id和单选按钮的选中状态
+            var userId = {{.userInfo.Id}}; //获取要用户的id
+            var actionId = control.attr("ids");//获取单选按钮的权限id
+            var isPass = control.val();
+            //将数据传递给服务端
+            $.post("/Admin/UserInfo/SetUserAction",{"userId":userId,"actionId":actionId,"isPass":isPass},function (data) {
+                //处理回调函数的数据
+                if(data.flag == "ok"){
+                    $.messager.show({
+                        title:"提示",
+                        msg:"权限分配成功",
+                        ShowType:"show"
+                    });
+                }else {
+                    $.messager.show({
+                        title:"提示",
+                        msg:"权限分配失败",
+                        ShowType:"show"
+                    })
+                }
+            })
+        }
+        //删除按钮事件的方法的实现
+        function bindBtnDelete(control) {
+            //获取选中的用户的id
+            var userId = {{.userInfo.Id}};
+            //获取选中用户所拥有的权限的id值
+            var actionId = control.attr("ids");
+            //将数据发送给服务端
+            $.post("/Admin/UserInfo/DeleteUserAction",{"userId":userId,"actionId":actionId},function (data) {
+                if (data.flag == "ok"){
+                    control.parent().find(".selections").removeAttr("checked");
+                    $.messager.alert("提示","删除权限成功","info");
+                }else {
+                    $.messager.alert("提示","删除权限失败","error");
+                }
+            })
+        }
+
+    </script>
+</head>
+<body>
+为用户<span style="color: red;font-size: 18px;font-weight: normal">{{.userInfo.UserName}}</span>分配权限
+<table>
+     <tr><td>编号</td><td>权限名称</td><td>Url</td><td>操作</td></tr>
+    {{range .allActions}}
+    <tr>
+        <td>{{.Id}}</td>
+        <td>{{.ActionInfoName}}</td>
+        <td>{{.Url}}</td>
+        <td>
+            {{if checkExtAction $.userExtActions .Id}}
+                {{if checkPassAction $.userExtActions .Id}}
+                    <input type="radio" value="1" class="selections" checked="checked" name="cba_{{.Id}}" ids="{{.Id}}">允许
+                    <input type="radio" value="0" class="selections" name="cba_{{.Id}}" ids="{{.Id}}">禁止
+                {{else}}
+                    <input type="radio" value="1" class="selections" name="cba_{{.Id}}" ids="{{.Id}}">允许
+                    <input type="radio" value="0" class="selections" checked="checked" name="cba_{{.Id}}" ids="{{.Id}}">禁止
+                {{end}}
+            {{else}}
+                <input type="radio" value="1" class="selections" name="cba_{{.Id}}" ids="{{.Id}}">允许
+                <input type="radio" value="0" class="selections" name="cba_{{.Id}}" ids="{{.Id}}">禁止
+            {{end}}
+                <input type="button" value="删除" class="btnDelete" ids="{{.Id}}">
+        </td>
+    </tr>
+    {{end}}
+</table>
+</body>
+</html>

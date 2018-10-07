@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新闻类别管理</title>
+    <script src="/static/js/jquery.js" type="text/javascript"></script>
+    <script src="/static/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="/static/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+            //加载界面时，添加子类别和父类别的窗体先进行隐藏
+            $('#addChileDiv').css("display","none");
+            $('#addParentDiv').css("display","block");
+
+            loadData()
+        })
+        function loadData() {
+            $('#tt').treegrid({
+                title: '栏目管理',
+                iconCls: 'icon-save',
+                width: 500,
+                height: 350,
+                nowrap: false,
+                rownumbers: true,
+                animate: true,
+                collapsible: true,
+                url: '/Admin/ArticleClass/ShowArticleClass',
+                idField: 'Id',
+                treeField: 'ClassName',
+                lines: true,
+                columns: [[
+                    { field: 'Id', title: '编号', width: 150, rowspan: 2 },
+                    { field: 'ClassName', title: '栏目名称', width: 120 },
+                    { field: 'Remark', title: '备注', width: 120, rowspan: 2 }
+
+                ]],
+              onClickRow: function (row) {
+                    //根据所单击的行，获取对应的子类别.
+                    $.post("/Admin/ArticleClass/ShowChildClass", { "id": row.Id }, function (data) {
+                        //先清空，后追加.如果没有数据不追加
+                        if (data.rows.length != 0) {
+                            var nodes = $('#tt').treegrid('getChildren', row.Id);
+                            for (var i = 0; i < nodes.length; i++) {
+                                $('#tt').treegrid('remove', nodes[i].id);
+                            }
+                            $('#tt').treegrid('append', {
+                                parent: row.Id,
+                                data: data.rows
+                            });
+                        }
+                    });
+                },
+                toolbar: [
+                    {
+                        id: 'btnAddParent',
+                        text: '添加根栏目',
+                        iconCls: 'icon-add',
+                        handler: function () {
+                            addParentArticle();
+
+                        }
+                    }
+                    ,{
+                        id: 'btnAdd',
+                        text: '添加子栏目',
+                        iconCls: 'icon-add',
+                        handler: function () {
+                            addChildArticle();
+
+                        }
+                    }, {
+                        id: 'btnEdit',
+                        text: '编辑',
+                        iconCls: 'icon-edit',
+                        handler: function () {
+                            // showChildArticel();
+
+                        }
+                    }]
+            })
+        }
+        //添加父类别
+        function addParentArticle() {
+            $('#addParentFrame').attr("src","/Admin/ArticleClass/ShowParentClass");
+            //将隐藏的模块展示出来
+            $('#addParentDiv').css("display","block");
+            //弹出窗口
+            $("#addParentDiv").dialog({
+                title: '新闻父类别',
+                width: 300,
+                height: 300,
+                collapsible: true, //可折叠
+                maximizable: true, //最大化
+                resizable: true,//可缩放
+                modal: true,//模态，表示只有将该窗口关闭才能修改页面中其它内容
+                buttons: [{ //按钮组
+                    text: 'Ok',//按钮上的文字
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //调用子界面的函数
+                        var childWindow = $('#addParentFrame')[0].contentWindow;
+                        childWindow.SubForm();
+                        $('#addParentDiv').dialog('close');
+                    }
+                }, {
+                    text: 'Cancel',
+                    handler: function () {
+                        $('#addParentDiv').dialog('close');
+                    }
+                }]
+            });
+
+        }
+        //添加完父类别后，调用回调函数
+        function afterParentAdd(data) {
+            if (data.flag == "ok"){
+                //关闭窗口
+                $('#addParentDiv').dialog("close");
+                //进行信息的重新加载
+                $('#tt').treegrid("reload");
+            }
+        }
+        //添加子类别
+        function addChildArticle() {
+            //先获取选中的是哪个父类别
+            var row = $('#tt').treegrid("getSelected");
+            //判断是否选中了行数
+            if (row != null){
+                //如果选中了行数，判断是第几行，获取对应的行号
+                $('#addChildFrame').attr("src","/Admin/ArticleClass/ShowAddChildClass?cId="+row.Id);
+                //将隐藏的展示块展示出来
+                $('#addChileDiv').css("display","block");
+                //弹出添加子类别的对话框
+                $("#addChileDiv").dialog({
+                    title: '新闻子类别',
+                    width: 300,
+                    height: 300,
+                    collapsible: true, //可折叠
+                    maximizable: true, //最大化
+                    resizable: true,//可缩放
+                    modal: true,//模态，表示只有将该窗口关闭才能修改页面中其它内容
+                    buttons: [{ //按钮组
+                        text: 'Ok',//按钮上的文字
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            //调用子界面的函数
+                            var childWindow = $('#addChildFrame')[0].contentWindow;
+                            childWindow.SubForm();
+                            $('#addChileDiv').dialog('close');
+                        }
+                    }, {
+                        text: 'Cancel',
+                        handler: function () {
+                            $('#addChileDiv').dialog('close');
+                        }
+                    }]
+                });
+            }else {
+                //如果选中的类别是空，则提示操作错误哦
+                $.messager.alert("提示","请选择父类别","error");
+            }
+        }
+        //添加完子类别后调用回调函数
+        function afterChildAdd(data) {
+            if (data.flag == "ok"){
+                //关闭窗口
+                $('#addChileDiv').dialog("close");
+                //进行信息的重新加载
+                $('#tt').treegrid("reload");
+            }
+        }
+
+    </script>
+</head>
+<body>
+<table id="tt"></table>
+{{/*//子类别添加功能的实现*/}}
+<div id="addChileDiv">
+    <iframe id="addChildFrame" width="100%" height="100%" frameborder="0"></iframe>
+</div>
+{{/*//父类别添加功能的的实现*/}}
+<div id="addParentDiv">
+    <iframe id="addParentFrame" width="100%" height="100%" frameborder="0"></iframe>
+</div>
+
+</body>
+</html>

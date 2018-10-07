@@ -1,0 +1,296 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/ArticelTemplate/ArticelStyle.css ">
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <link href="/static/css/pageBarStyle.css" rel="stylesheet" />
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/easyui-lang-zh_CN.js"></script>
+    <script src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            //调用发表评论按钮的点击事件
+            BindBtnClickEvent();
+            //加载评论内容
+            LoadComment(1);
+
+        })
+        //发表评论按钮的点击事件的实现
+        function BindBtnClickEvent() {
+            $('#btnComment').click(function () {
+                //首先获取评论文本框中的内容
+                var msg = $('#commentMsg').val();
+                //评论完后，将文本框中的内容清空
+                $('#commentMsg').val("");
+                //判断一下，评论的内容是否为空
+                if (msg != ""){
+                    //如果评论内容不为空，将评论内容发送到服务端，进行数据的存储
+                    $.post("/Admin/ArticleInfo/AddComment",{"msg":msg,"articleId":17},function (data) {
+                       if(data.flag == "ok"){
+                           //如果返回ok加载评论内容
+                           //加载内容之前，先将评论内容清空
+                           $("#articelCommentList li").remove();
+                           LoadComment();
+                       }
+
+                    })
+
+                }else {
+                    $.messager.alert("提示","请输入评论内容","error");
+                }
+
+
+
+            })
+        }
+        function LoadComment(page) {
+            $.post("/Admin/ArticleInfo/LoadCommentMsg",{"articleId":17,"PageIndex":page},function (data) {
+                //循环遍历取出评论内容，加载到文章的评论区中
+                for (var i=0;i<data.msg.length;i++){
+                    var comment = "<li>"+data.msg[i].AddDate.split("T")[0]+":"+data.msg[i].Msg+"</li>";
+                    $(comment).appendTo("#articelCommentList");
+                }
+
+                $('#myPageBar').html(data.pageBar);
+                //给页码条加上单击事件，获取单击的页码
+                BindPageBarClick();
+            })
+        }
+        function BindPageBarClick(){
+            $(".pageBarLink").click(function () {
+                var pageIndex = $(this).attr("href").split("=")[1];//获取href中的页码值
+                //清空上一页内容
+                $("#articelCommentList li").remove();
+                LoadComment(pageIndex);
+                return false;
+            })
+        }
+
+    </script>
+
+</head>
+<body>
+<!--顶部布局-->
+    <div id="articelTop">
+    <!--顶部布局第一行-->
+    	<div id="articelTop_one">
+    		<div classs="articelTop_oneleft">
+    			您好！admin,欢迎来到会员中心!【会员中心】  【退出】
+    		</div>
+    		<div class="articelTop_oneRight">
+    			设为首页&nbsp;加入收藏&nbsp;网站地图
+    		</div>
+    	</div>
+    	 <!--顶部布局第一行结束-->
+    	 <div style="clear:both"></div>
+    	 	 <!--顶部布局第二行开始-->
+    	 	 <div id="articelTop_two">
+    	 	 		<div class="articelTopImg">
+    	 	 			<img src="/ArticelTemplate/images/logo.gif">
+    	 	 		</div>
+    	 	 		<div class="articelTopSearch">
+
+    	 	 		</div>
+    	 	 </div>
+    	 	  <!--顶部布局第二行结束-->
+    	 	   <div style="clear:both"></div>
+    	 	  <!--导航条布局-->
+    	 	  <div id="articelNav">
+    	 	  		<ul>
+    	 	  			<li><a href="javascript:void(0)">首页</a></li>
+    	 	  			<li><a href="javascript:void(0)">新闻频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">图片频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">下载频道</a></li>
+    	 	  		</ul>
+    	 	   </div>
+    	 	    <!--导航条布局结束-->
+    </div>
+    <!--顶部布局结束-->
+    <!--中间内容开始-->
+    <div id="articelContent">
+    	<div id="articelContent_left">
+ 		 <div id="articelContent_leftTop">
+                您当前位置：
+    			<a href="javascript:void(0)">ItcastCMS</a> >> 
+    			<a href="javascript:void(0)">新闻频道</a> >>
+    				<a href="javascript:void(0)">2018年度前十名的朋友圈段子，笑死了！</a> >>
+    				<a href="javascript:void(0)">浏览文章</a> 
+    		</div>
+    		<div id="articelContent_leftBttom">
+    			<h2>2018年度前十名的朋友圈段子，笑死了！</h2>
+<div class="artcelTop"><span>时间:2018-10-06 </span><span>信息来源:今日头条</span></div>
+<div id="splitLine"></div>
+
+<p><strong>第十名</strong></p>
+
+<p><strong>昨天中午有个男同事外出，没把手机带走，他老婆不停地打电话来。午睡的女同事被吵烦了，拿过手机大吼：&ldquo;我们在睡觉，你烦不烦！&rdquo;结果，那位男同事今天到现在都没来上班！</strong></p>
+
+<p><strong>第九名</strong></p>
+
+<p><strong>下午肚子饿，看见同事桌上有瓶酸奶，想都没想就喝了，一会同事来了大叫到：&ldquo;我的洗面奶怎么不见了！108块啊！&rdquo;哥没说话，只是默默的走向厕所，一顿抠嗓子，老难受了，把东西拼命的吐，直到吐出酸水，好不容易吐的差不多了，眼泪叭嚓滴回到座位上时，同事抱着一个瓶子 说：&ldquo;吓死我了，洗面奶滚到桌子下了，我的酸奶怎么又不见了呢。&rdquo;哥心里直骂：你奶奶个熊滴，喝你点酸奶，把人往死里整。</strong></p>
+
+<p><strong>第八名</strong></p>
+
+<p><strong>有位大爷去人民银行取钱，直接走到窗口，保安过来说：&ldquo;大爷，按号。&rdquo;大爷：&ldquo;啥？&rdquo;保安：&ldquo;按号。&rdquo;大爷心想，不愧是大银行呀，取个钱还要暗号，于是低声对保安说：&ldquo;天王盖地虎。&rdquo;保安无奈的帮老爷子按出一张排队票，老爷子心想：吓死我了，居然被我蒙对了！</strong></p>
+
+<p><strong>第七名</strong></p>
+
+<p><strong>一漂亮女同事，她老公给她送午饭，没说话放下就走了。新来的男同事问：刚才那是谁啊？她回答：送外卖的。新来又问：怎么沒给钱？她说：不用给，晚上陪他睡一觉就好了。男同事沉默了，第二天，给她带了四菜一汤的午饭，整个办公室轰然大笑&hellip;&hellip;</strong></p>
+
+<p><strong>第六名</strong></p>
+
+<p><strong>有一孩子问妈妈：当年你为什么嫁给爸爸呀？</strong></p>
+
+<p><strong>妈妈说：&ldquo;当年妈眼睛瞎了，才嫁给你爸！&rdquo;</strong></p>
+
+<p><strong>孩子又问爸爸：咱家怎么这么穷啊？</strong></p>
+
+<p><strong>爸爸说：&ldquo;咱们家的钱都给你妈治眼睛了！&rdquo;</strong></p>
+
+<p><strong>第五名</strong></p>
+
+<p><strong>饭店里人特别多，一对年轻情侣实在找不到地方了，就和我拼桌，坐在我对面。说实话那女的长得真挺漂亮，我就多看了两眼，结果被那个男的发现了，他啪嚓一下往桌子上放了一个大众的车钥匙想吓我，我仔细一看，我去，辉腾&hellip;&hellip;我啪嚓往桌子上放了个玛莎拉蒂的车钥匙，啪嚓，啪嚓，布加迪、劳斯莱斯，好几个车钥匙我都摔桌子上了，那男的领着女的灰溜溜的走了&hellip;&hellip;真是的，你跟我一个配钥匙的装什么装！</strong></p>
+
+<p><strong>第四名</strong></p>
+
+<p><strong>到银行汇款，车临时停路边上，为了怕交警罚就把朋友留下看车，跟他说有查车的过来了告诉我一声。进去几分钟果然有交警来了，那个朋友风风火火地闯进银行大声吼到：大哥，警察来了，快走啊！尼玛，偌大的一个大厅几十号人，顷刻间寂静无声，然后人潮像洪水一样涌出银行，接着我就被五六个保安按在了地上&hellip;&hellip;真他妈冤！不怕神一样的对手，就怕猪一样的队友！</strong></p>
+
+<p><strong>第三名 大爷摔倒系列</strong></p>
+
+<p><strong>（1）今天下大雪，刚才出门见一大爷摔倒了，我过去问道：大爷，我一月工资不到2000块钱，能扶您起来么？大爷：小伙子，你走吧，我再等一会儿。我：好勒！天气虽冷，大爷的话却是暖暖的，满满的都是正能量&hellip;&hellip;</strong></p>
+
+<p><strong>（2）走在路上看到大爷躺在地上，我赶紧上去要扶，大爷看了看我说：后生你别动，看你也是个打工的，你走吧我再等等。我被感动了赶紧说：大爷，有个开路虎的停好车就快过来了。大爷也激动了：你这后生还算实在，你干脆别走了给我做个证人，完事儿也买个车上班开。</strong></p>
+
+<p><strong>（3）走在路上看到个大爷躺在地上，我赶紧上陪大爷躺下，大爷看了看我说：后生你别跟我抢，我儿子要买房娶媳妇。我说：我也要买房娶媳妇啊，但我不啃老。大爷说：后生有志气，这地给你了，我换个地儿！</strong></p>
+
+<p><img alt="2018年度前十名的朋友圈段子，笑死了！" src="http://p9.pstatp.com/large/pgc-image/153844885769363b087086a" /></p>
+
+<p>&nbsp;</p>
+
+<p><strong>第二名</strong></p>
+
+<p><strong>现在小学语文太难了，看他们的一道作业题：</strong></p>
+
+<p><strong>要求：把以下四句话用关联词连接：</strong></p>
+
+<p><strong>（1）李姐姐瘫痪了；</strong></p>
+
+<p><strong>（2）李姐姐顽强地学习；</strong></p>
+
+<p><strong>（3）李姐姐学会了多门外语；</strong></p>
+
+<p><strong>（4）李姐姐学会了针灸。</strong></p>
+
+<p><strong>（正确答案应该是：李姐姐虽然瘫痪了，但顽强地学习，不仅学会了多门外语，而且还学会了针灸。）</strong></p>
+
+<p><strong>结果有一个孩子写：虽然李姐姐顽强地学会了针灸和多门外语，可她还是瘫痪了。</strong></p>
+
+<p><strong>后来，发现更猛的孩子写道：</strong></p>
+
+<p><strong>李姐姐不但学会了外语，还会了针灸，她那么顽强地学习，终于瘫痪了。</strong></p>
+
+<p><strong>李姐姐之所以瘫痪了，是因为顽强地学习，非但学会了多门外语，甚至学会了针灸。</strong></p>
+
+<p><strong>李姐姐是那么顽强的学习，不但学会了多门外语和针灸，最后还学会了瘫痪。</strong></p>
+
+<p><strong>李姐姐学会了多门外语，学会了针灸，又在顽强地学习瘫痪。</strong></p>
+
+<p><strong>亮点总在最后：</strong></p>
+
+<p><strong>李姐姐通过顽强的学习，学会了多门外语和针灸，结果照着一本外文版针灸书把自己扎瘫痪了！</strong></p>
+
+<p><img alt="2018年度前十名的朋友圈段子，笑死了！" src="http://p3.pstatp.com/large/pgc-image/1538448857716491f7092c6" /></p>
+
+<p>&nbsp;</p>
+
+<p><strong>第一名</strong></p>
+
+<p><strong>今天惹祸了。</strong></p>
+
+<p><strong>办公室的鱼缸里养了几只透明的小虾，领导带着眼镜看半天，问我养的什么。</strong></p>
+
+<p><strong>我说：&ldquo;虾啊！&rdquo;</strong></p>
+
+<p><strong>领导一愣，走了&hellip;&hellip;</strong></p>
+
+<p><strong>我也楞了，赶紧大声地解释：&ldquo;虾啊领导！领导虾啊！领导真是虾！！是真虾啊！！！&rdquo;</strong></p>
+
+
+                <!-------相关新闻------->
+                  <div id="articelContent_Same">
+                  <div class="articelContent_SameNew">相关新闻</div>
+                <ul id="likeNewList">
+                  
+                </ul>
+            </div>
+                 <!-------相关新闻结束------->
+                  <br />
+                <!----------评论展示----------------->
+                <div id="articelComment">
+                    <div id="articelComment_top">
+                       <span style="font-size:20px;font-weight:bolder;display:block"> 我有话说</span>
+                     
+                           <span > 以下是对 <strong>[2018年度前十名的朋友圈段子，笑死了！]</strong> 的评论,总共:<span id="recordCount" style="font-size:14px;color:red;font-weight: bolder"></span>条评论</span>
+                    </div>
+                    <div id="articelComment_middle">
+                        <ul id="articelCommentList">
+                            
+                        </ul>
+                        <input type="hidden" id="currentPageIndex" />
+                        <div id="myPageBar" class="page_nav"></div>
+                    </div>
+                    <div id="articelCommnet_bottome">
+                        <textarea style="font-size:14px;padding:5px;width:90%;height:90px;overflow:auto;" placeholder="文明上网，请对您的发言负责" id="commentMsg"></textarea>
+                        <input type="button" id="btnComment" style="float:right" value="发布评论" class="reply_btn"/>
+                    </div>
+
+                </div>
+                <!----------评论展示结束----------------->
+    		</div>
+          
+    	</div>
+        <!---中间内容右侧布局---->
+    		<div id="articelContent_right">
+    		   <div id="hotArticel">
+                   <div class="newArticel_Title">
+                    <h3><span>最</span>新文章</h3>
+                </div>
+                <div id="newArticel_Content">
+                    <div id="result"></div>
+
+                    
+              </div>
+
+        </div>
+    	   </div>
+          <!---中间内容右侧布局结束---->
+    </div>
+
+    <!--中间内容结束-->
+    <div id="articelBottom">
+
+           <div id="about">
+            <a href="javascript:void(0)">关于我们</a>
+            <a href="javascript:void(0)">联系我们</a>
+            <a href="javascript:void(0)">法律声明</a>
+            <a href="javascript:void(0)">人才招聘</a>
+            <a href="javascript:void(0)">免责声明</a>
+            <a href="javascript:void(0)">网站地图</a>
+             <a href="javascript:void(0)">友情链接</a>
+            
+        </div>
+        <div id="copyRight">
+            <p>传智播客-专业java培训、php培训、iOS培训、C++培训、网页设计、平面设计、网络营销、游戏开发、前端与移动开发培训机构
+版权所有 2016 - 2018北京传智播客教育科技有限公司</p>
+<p>地址：北京市昌平区建材城西路金燕龙办公楼一层 邮编：100096</p>
+<p>电话：010-82935150/60/70 传真：010-82935100 邮箱: zhanghj+itcast.cn</p>
+        </div>
+
+
+    </div>
+</body>
+</html>

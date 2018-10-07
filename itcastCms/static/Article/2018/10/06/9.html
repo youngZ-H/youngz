@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/ArticelTemplate/ArticelStyle.css ">
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <link href="/static/css/pageBarStyle.css" rel="stylesheet" />
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/easyui-lang-zh_CN.js"></script>
+    <script src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            //调用发表评论按钮的点击事件
+            BindBtnClickEvent();
+            //加载评论内容
+            LoadComment(1);
+
+        })
+        //发表评论按钮的点击事件的实现
+        function BindBtnClickEvent() {
+            $('#btnComment').click(function () {
+                //首先获取评论文本框中的内容
+                var msg = $('#commentMsg').val();
+                //评论完后，将文本框中的内容清空
+                $('#commentMsg').val("");
+                //判断一下，评论的内容是否为空
+                if (msg != ""){
+                    //如果评论内容不为空，将评论内容发送到服务端，进行数据的存储
+                    $.post("/Admin/ArticleInfo/AddComment",{"msg":msg,"articleId":9},function (data) {
+                       if(data.flag == "ok"){
+                           //如果返回ok加载评论内容
+                           //加载内容之前，先将评论内容清空
+                           $("#articelCommentList li").remove();
+                           LoadComment();
+                       }
+
+                    })
+
+                }else {
+                    $.messager.alert("提示","请输入评论内容","error");
+                }
+
+
+
+            })
+        }
+        function LoadComment(page) {
+            $.post("/Admin/ArticleInfo/LoadCommentMsg",{"articleId":9,"PageIndex":page},function (data) {
+                console.log(data)
+                //循环遍历取出评论内容，加载到文章的评论区中
+                for (var i=0;i<data.msg.length;i++){
+                    var comment = "<li>"+data.msg[i].AddDate.split("T")[0]+":"+data.msg[i].Msg+"</li>";
+                    $(comment).appendTo("#articelCommentList");
+                }
+
+                $('#myPageBar').html(data.pageBar);
+                //给页码条加上单击事件，获取单击的页码
+                BindPageBarClick();
+            })
+        }
+        function BindPageBarClick(){
+            $('.pageBarLink').click(function () {
+                var pageIndex = $(this).attr("href").split("=")[1];//获取href中的页码值
+                //清空上一页内容
+                $("#articelCommentList li").remove();
+                loadComment(pageIndex);
+                return false;
+            })
+        }
+
+    </script>
+
+</head>
+<body>
+<!--顶部布局-->
+    <div id="articelTop">
+    <!--顶部布局第一行-->
+    	<div id="articelTop_one">
+    		<div classs="articelTop_oneleft">
+    			您好！admin,欢迎来到会员中心!【会员中心】  【退出】
+    		</div>
+    		<div class="articelTop_oneRight">
+    			设为首页&nbsp;加入收藏&nbsp;网站地图
+    		</div>
+    	</div>
+    	 <!--顶部布局第一行结束-->
+    	 <div style="clear:both"></div>
+    	 	 <!--顶部布局第二行开始-->
+    	 	 <div id="articelTop_two">
+    	 	 		<div class="articelTopImg">
+    	 	 			<img src="/ArticelTemplate/images/logo.gif">
+    	 	 		</div>
+    	 	 		<div class="articelTopSearch">
+
+    	 	 		</div>
+    	 	 </div>
+    	 	  <!--顶部布局第二行结束-->
+    	 	   <div style="clear:both"></div>
+    	 	  <!--导航条布局-->
+    	 	  <div id="articelNav">
+    	 	  		<ul>
+    	 	  			<li><a href="javascript:void(0)">首页</a></li>
+    	 	  			<li><a href="javascript:void(0)">新闻频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">图片频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">下载频道</a></li>
+    	 	  		</ul>
+    	 	   </div>
+    	 	    <!--导航条布局结束-->
+    </div>
+    <!--顶部布局结束-->
+    <!--中间内容开始-->
+    <div id="articelContent">
+    	<div id="articelContent_left">
+ 		 <div id="articelContent_leftTop">
+                您当前位置：
+    			<a href="javascript:void(0)">ItcastCMS</a> >> 
+    			<a href="javascript:void(0)">新闻频道</a> >>
+    				<a href="javascript:void(0)">姚明曾是垃圾话高手，怒怼卡曼硬刚詹皇，最爱说的一句让老外纳闷</a> >>
+    				<a href="javascript:void(0)">浏览文章</a> 
+    		</div>
+    		<div id="articelContent_leftBttom">
+    			<h2>姚明曾是垃圾话高手，怒怼卡曼硬刚詹皇，最爱说的一句让老外纳闷</h2>
+<div class="artcelTop"><span>时间:2018-10-06 </span><span>信息来源:今日头条</span></div>
+<div id="splitLine"></div>
+
+<p>别看姚明块头大，站在他面前容易产生压迫感，实际上大姚是一个非常温文尔雅的人，在面对记者和媒体时，他往往会侃侃而谈，妙语连珠，让人感叹其语言艺术的强大。虽然性格很好，但大姚也是个强硬的角色，在他的职业生涯里，也没少跟人喷过垃圾话，有些还闹出了笑话。<img src="/static/fileUp/2018/October/6/2018October61054398463700.jpg" /></p>
+
+
+                <!-------相关新闻------->
+                  <div id="articelContent_Same">
+                  <div class="articelContent_SameNew">相关新闻</div>
+                <ul id="likeNewList">
+                  
+                </ul>
+            </div>
+                 <!-------相关新闻结束------->
+                  <br />
+                <!----------评论展示----------------->
+                <div id="articelComment">
+                    <div id="articelComment_top">
+                       <span style="font-size:20px;font-weight:bolder;display:block"> 我有话说</span>
+                     
+                           <span > 以下是对 <strong>[姚明曾是垃圾话高手，怒怼卡曼硬刚詹皇，最爱说的一句让老外纳闷]</strong> 的评论,总共:<span id="recordCount" style="font-size:14px;color:red;font-weight: bolder"></span>条评论</span>
+                    </div>
+                    <div id="articelComment_middle">
+                        <ul id="articelCommentList">
+                            
+                        </ul>
+                        <input type="hidden" id="currentPageIndex" />
+                        <div id="myPageBar" class="page_nav"></div>
+                    </div>
+                    <div id="articelCommnet_bottome">
+                        <textarea style="font-size:14px;padding:5px;width:90%;height:90px;overflow:auto;" placeholder="文明上网，请对您的发言负责" id="commentMsg"></textarea>
+                        <input type="button" id="btnComment" style="float:right" value="发布评论" class="reply_btn"/>
+                    </div>
+
+                </div>
+                <!----------评论展示结束----------------->
+    		</div>
+          
+    	</div>
+        <!---中间内容右侧布局---->
+    		<div id="articelContent_right">
+    		   <div id="hotArticel">
+                   <div class="newArticel_Title">
+                    <h3><span>最</span>新文章</h3>
+                </div>
+                <div id="newArticel_Content">
+                    <div id="result"></div>
+
+                    
+              </div>
+
+        </div>
+    	   </div>
+          <!---中间内容右侧布局结束---->
+    </div>
+
+    <!--中间内容结束-->
+    <div id="articelBottom">
+
+           <div id="about">
+            <a href="javascript:void(0)">关于我们</a>
+            <a href="javascript:void(0)">联系我们</a>
+            <a href="javascript:void(0)">法律声明</a>
+            <a href="javascript:void(0)">人才招聘</a>
+            <a href="javascript:void(0)">免责声明</a>
+            <a href="javascript:void(0)">网站地图</a>
+             <a href="javascript:void(0)">友情链接</a>
+            
+        </div>
+        <div id="copyRight">
+            <p>传智播客-专业java培训、php培训、iOS培训、C++培训、网页设计、平面设计、网络营销、游戏开发、前端与移动开发培训机构
+版权所有 2016 - 2018北京传智播客教育科技有限公司</p>
+<p>地址：北京市昌平区建材城西路金燕龙办公楼一层 邮编：100096</p>
+<p>电话：010-82935150/60/70 传真：010-82935100 邮箱: zhanghj+itcast.cn</p>
+        </div>
+
+
+    </div>
+</body>
+</html>

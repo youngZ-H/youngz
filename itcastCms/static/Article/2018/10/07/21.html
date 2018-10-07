@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/ArticelTemplate/ArticelStyle.css ">
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet" />
+    <link href="/static/css/themes/icon.css" rel="stylesheet" />
+    <link href="/static/css/pageBarStyle.css" rel="stylesheet" />
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/easyui-lang-zh_CN.js"></script>
+    <script src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            //调用发表评论按钮的点击事件
+            BindBtnClickEvent();
+            //加载评论内容
+            LoadComment(1);
+
+        })
+        //发表评论按钮的点击事件的实现
+        function BindBtnClickEvent() {
+            $('#btnComment').click(function () {
+                //首先获取评论文本框中的内容
+                var msg = $('#commentMsg').val();
+                //评论完后，将文本框中的内容清空
+                $('#commentMsg').val("");
+                //判断一下，评论的内容是否为空
+                if (msg != ""){
+                    //如果评论内容不为空，将评论内容发送到服务端，进行数据的存储
+                    $.post("/Admin/ArticleInfo/AddComment",{"msg":msg,"articleId":21},function (data) {
+                       if(data.flag == "ok"){
+                           //如果返回ok加载评论内容
+                           //加载内容之前，先将评论内容清空
+                           $("#articelCommentList li").remove();
+                           LoadComment();
+                       }else {
+                           $.messager.alert("提示",data.msg,"error");
+                       }
+
+                    })
+
+                }else {
+                    $.messager.alert("提示","请输入评论内容","error");
+                }
+
+
+
+            })
+        }
+        function LoadComment(page) {
+            $.post("/Admin/ArticleInfo/LoadCommentMsg",{"articleId":21,"PageIndex":page},function (data) {
+                //循环遍历取出评论内容，加载到文章的评论区中
+                for (var i=0;i<data.msg.length;i++){
+                    var comment = "<li>"+data.msg[i].AddDate.split("T")[0]+":"+data.msg[i].Msg+"</li>";
+                    $(comment).appendTo("#articelCommentList");
+                }
+
+                $('#myPageBar').html(data.pageBar);
+                //给页码条加上单击事件，获取单击的页码
+                BindPageBarClick();
+            })
+        }
+        function BindPageBarClick(){
+            $(".pageBarLink").click(function () {
+                var pageIndex = $(this).attr("href").split("=")[1];//获取href中的页码值
+                //清空上一页内容
+                $("#articelCommentList li").remove();
+                LoadComment(pageIndex);
+                return false;
+            })
+        }
+
+    </script>
+
+</head>
+<body>
+<!--顶部布局-->
+    <div id="articelTop">
+    <!--顶部布局第一行-->
+    	<div id="articelTop_one">
+    		<div classs="articelTop_oneleft">
+    			您好！admin,欢迎来到会员中心!【会员中心】  【退出】
+    		</div>
+    		<div class="articelTop_oneRight">
+    			设为首页&nbsp;加入收藏&nbsp;网站地图
+    		</div>
+    	</div>
+    	 <!--顶部布局第一行结束-->
+    	 <div style="clear:both"></div>
+    	 	 <!--顶部布局第二行开始-->
+    	 	 <div id="articelTop_two">
+    	 	 		<div class="articelTopImg">
+    	 	 			<img src="/ArticelTemplate/images/logo.gif">
+    	 	 		</div>
+    	 	 		<div class="articelTopSearch">
+
+    	 	 		</div>
+    	 	 </div>
+    	 	  <!--顶部布局第二行结束-->
+    	 	   <div style="clear:both"></div>
+    	 	  <!--导航条布局-->
+    	 	  <div id="articelNav">
+    	 	  		<ul>
+    	 	  			<li><a href="javascript:void(0)">首页</a></li>
+    	 	  			<li><a href="javascript:void(0)">新闻频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">图片频道</a></li>
+    	 	  			<li><a href="javascript:void(0)">下载频道</a></li>
+    	 	  		</ul>
+    	 	   </div>
+    	 	    <!--导航条布局结束-->
+    </div>
+    <!--顶部布局结束-->
+    <!--中间内容开始-->
+    <div id="articelContent">
+    	<div id="articelContent_left">
+ 		 <div id="articelContent_leftTop">
+                您当前位置：
+    			<a href="javascript:void(0)">ItcastCMS</a> >> 
+    			<a href="javascript:void(0)">新闻频道</a> >>
+    				<a href="javascript:void(0)">吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很</a> >>
+    				<a href="javascript:void(0)">浏览文章</a> 
+    		</div>
+    		<div id="articelContent_leftBttom">
+    			<h2>吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很</h2>
+<div class="artcelTop"><span>时间:2018-10-07 </span><span>信息来源:今日头条</span></div>
+<div id="splitLine"></div>
+
+<p><img alt="吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很" src="http://p98.pstatp.com/large/pgc-image/15383856670487b2fd185e0" /></p>
+
+<p>&nbsp;</p>
+
+<p>吴京的《战狼2》刷新了国产电影的最高票房，这部电影成为票房能之王，而且还拥有非常好的口碑，很多网友都一致好评。吴京也因这部影片一跃冲进一线功夫巨星的行列，吴京的身份，人气都蹭蹭暴涨，很多粉丝都前来关注吴京，吴京的身价自然也是很很高了。当然越来越多的观众更加期待吴京的《战狼3》。</p>
+
+<p><img alt="吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很" src="http://p3.pstatp.com/large/pgc-image/153838566710191ea27ccf4" /></p>
+
+<p>&nbsp;</p>
+
+<p>吴京在拍《战狼2》的时候，遇到了很多困难，无论是选取演员还是资金投入都遇到了很多问题，但是吴京还是客服困难拍出了这惊世骇俗的影片，让很多观众都对吴京竖起了大拇指，吴京还多次受到好莱坞的邀请，因为《战狼2》的成功，很多演员和投资方纷纷找上门，想要出演和投资吴京的《战狼3》，但是吴京并不是一个随便的人，谁来就用谁，吴京只挑选有实力的演员，敢打敢拼有真实演技的演员，而非只是单纯的小鲜肉没有任何演技的演员参演。</p>
+
+<p><img alt="吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很" src="http://p1.pstatp.com/large/pgc-image/153838566707615bb1296de" /></p>
+
+<p>&nbsp;</p>
+
+<p>吴京为了《战狼3》能够拍出好的效果，也是费尽心思了，寻找拜访了很多大咖，看见吴京发的这条微博，照片中的这位人物就是吴京三顾茅庐请来的，他就是国际巨星史泰龙，史泰龙今年已经70岁高龄了，但是上述照片看来是不是还是很年轻呢？史泰龙可能是长期锻炼的原因，身体素质特别好，特别健壮，而且跟吴京相互切磋还是没问题的。</p>
+
+<p><img alt="吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很" src="http://p98.pstatp.com/large/pgc-image/153838566703584bf83620c" /></p>
+
+<p>&nbsp;</p>
+
+<p>史泰龙这位国际巨星，可不是谁都能请来的，除了成龙，史泰龙可能就给吴京面子了，吴京是荧屏上的硬汉，可能正是那份对演员的执着与男儿热血方刚的魅力打动了史泰龙，史泰龙终于同意愿意参演《战狼3》，据了解美国著名演员巨石强森和范迪塞尔也会出演，如果真是这样的话，吴京的《战狼3》可能要超过《战狼2》再创新高，各位小主你们觉着呢？</p>
+
+<p><img alt="吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很" src="http://p98.pstatp.com/large/pgc-image/1538385667155a91f8fb500" /></p>
+
+
+                <!-------相关新闻------->
+                  <div id="articelContent_Same">
+                  <div class="articelContent_SameNew">相关新闻</div>
+                <ul id="likeNewList">
+                  
+                </ul>
+            </div>
+                 <!-------相关新闻结束------->
+                  <br />
+                <!----------评论展示----------------->
+                <div id="articelComment">
+                    <div id="articelComment_top">
+                       <span style="font-size:20px;font-weight:bolder;display:block"> 我有话说</span>
+                     
+                           <span > 以下是对 <strong>[吴京为拍《战狼3》，三顾茅庐请70岁的传奇出山，创新高稳的很]</strong> 的评论,总共:<span id="recordCount" style="font-size:14px;color:red;font-weight: bolder"></span>条评论</span>
+                    </div>
+                    <div id="articelComment_middle">
+                        <ul id="articelCommentList">
+                            
+                        </ul>
+                        <input type="hidden" id="currentPageIndex" />
+                        <div id="myPageBar" class="page_nav"></div>
+                    </div>
+                    <div id="articelCommnet_bottome">
+                        <textarea style="font-size:14px;padding:5px;width:90%;height:90px;overflow:auto;" placeholder="文明上网，请对您的发言负责" id="commentMsg"></textarea>
+                        <input type="button" id="btnComment" style="float:right" value="发布评论" class="reply_btn"/>
+                    </div>
+
+                </div>
+                <!----------评论展示结束----------------->
+    		</div>
+          
+    	</div>
+        <!---中间内容右侧布局---->
+    		<div id="articelContent_right">
+    		   <div id="hotArticel">
+                   <div class="newArticel_Title">
+                    <h3><span>最</span>新文章</h3>
+                </div>
+                <div id="newArticel_Content">
+                    <div id="result"></div>
+
+                    
+              </div>
+
+        </div>
+    	   </div>
+          <!---中间内容右侧布局结束---->
+    </div>
+
+    <!--中间内容结束-->
+    <div id="articelBottom">
+
+           <div id="about">
+            <a href="javascript:void(0)">关于我们</a>
+            <a href="javascript:void(0)">联系我们</a>
+            <a href="javascript:void(0)">法律声明</a>
+            <a href="javascript:void(0)">人才招聘</a>
+            <a href="javascript:void(0)">免责声明</a>
+            <a href="javascript:void(0)">网站地图</a>
+             <a href="javascript:void(0)">友情链接</a>
+            
+        </div>
+        <div id="copyRight">
+            <p>传智播客-专业java培训、php培训、iOS培训、C++培训、网页设计、平面设计、网络营销、游戏开发、前端与移动开发培训机构
+版权所有 2016 - 2018北京传智播客教育科技有限公司</p>
+<p>地址：北京市昌平区建材城西路金燕龙办公楼一层 邮编：100096</p>
+<p>电话：010-82935150/60/70 传真：010-82935100 邮箱: zhanghj+itcast.cn</p>
+        </div>
+
+
+    </div>
+</body>
+</html>
